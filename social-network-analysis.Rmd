@@ -1,6 +1,6 @@
 ---
 title: "HUDK4051: Social Network Analysis"
-author: "Charles Lang"
+author: "Gian Zlupko"
 date: "1/26/2018"
 output: html_document
 ---
@@ -28,6 +28,35 @@ Manipulate each of the data sets so that it is suitable for building a social ne
 
 ```{r}
 
+# libraries 
+
+library(igraph) 
+library(visNetwork) 
+library(tidyverse) 
+
+
+# store get.on.with data set in 'friendly' 
+friendly <- read_csv("get.on.with.csv") 
+head(friendly)
+
+# create edgelist 
+
+friendly_edge <- friendly %>%
+  select(from, to) 
+
+friendly_edge_mat <- as.matrix(friendly_edge)
+
+g_friendly <- graph.edgelist(friendly_edge_mat) 
+
+
+
+# subset node attributes
+V(g_friendly)
+
+
+
+
+
 ```
 
 ## Visualize the Networks
@@ -35,6 +64,12 @@ Manipulate each of the data sets so that it is suitable for building a social ne
 Create a graph for each of the data sets, are the graphs directed or undirected? Visualize each of the graphs you have created and color the nodes according to gender. Save pdfs of your graphs in this directory for upload to Github.
 
 ```{r}
+
+# visualize the get.on.with network (e.g. 'friendly') 
+plot(g_friendly) 
+
+
+
 
 ```
 
