@@ -40,44 +40,30 @@ friendly <- read_csv("get.on.with.csv")
 
 friendly_edge <- friendly %>%
   select(from, to) 
+head(friendly_edge) 
 
-g_friendly <- graph.edgelist(as.matrix(friendly_edge), 
-                             directed = TRUE)
+#g_friendly <- graph.edgelist(as.matrix(friendly_edge), 
+                             #directed = TRUE)
 
 # add gender as a vertex attribute to get.on.with data
 
-g_friendly <- set_vertex_attr(g_friendly, 
-                              "gender", 
-                              value = friendly$gender.from)
+friendly_gender <- read_csv("get.on.with.csv") 
 
+friendly_gender <- friendly_gender %>%
+  select(from, gender.from) %>%
+  rename(gender = gender.from) %>%
+  rename(student = from) %>%
+  distinct() 
 
-vertex_attr(g_friendly) 
-
-
-
-# create edgelist 
-
-
-
-friendly_edge_mat <- as.matrix(friendly_edge)
-
-g_friendly <- graph.edgelist(friendly_edge_mat) 
-
-
-# create node list
-
-friendly_nodes <- read_csv("get.on.with.csv") 
-
-
-friendly_nodes <- friendly_nodes %>%
-  select(from, gender.from) 
-head(friendly_edge) 
-
-# create igraph object
 
 g_friendly <- graph_from_data_frame(d = friendly_edge, 
-                                    vertices = friendly_nodes, 
-                                    directed = TRUE)  
+                                    vertices = friendly_gender, 
+                                    directed = TRUE) 
+
+
+
+# best friends data set 
+
 
 
 
@@ -93,11 +79,14 @@ Create a graph for each of the data sets, are the graphs directed or undirected?
 
 # visualize the get.on.with network (e.g. 'friendly') 
 
+
 V(g_friendly)$color <- ifelse(
-  V(g_friendly)$gender == "male", "red", "white"
+  V(g_friendly)$gender == "male", "red", "blue"
 )
 
-plot(g_friendly, vertext.label.color = "black") 
+
+plot(g_friendly, edge.arrow.size = 0.2, 
+     vertext.label.color = "black")
 
 
 
