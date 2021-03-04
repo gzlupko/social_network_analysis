@@ -89,6 +89,12 @@ plot(g_friendly, edge.arrow.size = 0.2,
      vertext.label.color = "black")
 
 
+library(threejs) 
+
+graphjs(g_friendly, main  = "Student Friendships", 
+        showLabels = TRUE) 
+
+
 
 ```
 
