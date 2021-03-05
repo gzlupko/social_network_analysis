@@ -144,7 +144,6 @@ graphjs(g_friendly, main  = "Friendship Network",
 
 
 
-
 # visualize the best friends network using igraph 
 
 
@@ -244,23 +243,38 @@ summary(degree(g_work_with, mode = c("all")))
 
 # distribution of total centrality in
 
+
 friendly_centrality <- degree(g_friendly, mode = c("all")) 
 hist(friendly_centrality, main = "Friendship Network Centrality Distribution",
-     breaks = 15) 
+     breaks = 15, xlab = "Centrality", ylab = "Frequency")  
 
 best_friend_centrality <- degree(g_best, mode = c("all")) 
 hist(best_friend_centrality, main = "Best Friend Network Centrality Distribution",
-     breaks = 15) 
+     breaks = 15, xlab = "Centrality", ylab = "Frequency")  
+
+
+best_friend_centrality_in_coming <- degree(g_best, mode = c("in")) 
+hist(best_friend_centrality_in_coming, main = "In-Coming Best Friend \n Network Centrality Distribution",
+     breaks = 15, xlab = "Centrality", ylab = "Frequency")
+
 
 work_with_centrality <- degree(g_work_with, mode = c("all")) 
 hist(work_with_centrality, main = "Work Preferences Centrality Distribution",
-     breaks = 15) 
+     breaks = 15, xlab = "Centrality", ylab = "Frequency")  
+
 
 
 
 ```
 
 Does **degree centrality** mean the same thing for each of your networks? Does it make sense for each of your networks?
+
+Degree centrality means different things for the different networks. 
+
+
+The centrality distribution plots indicate that the distribution of friendship centrality is more normal than work preferences. The distribution of best friend total centrality is left skewed, indicating that the majority of students in the best friend network are less central (less incoming and outcoming ties). This makes sense as we would expect best friend ties to be more exclusive. 
+
+
 
 Who in the class has the highest closeness centrality?
 
