@@ -116,8 +116,6 @@ g_work_with <- graph_from_data_frame(d = work_with_edge,
                                     directed = TRUE) 
 
 
-
-
 ```
 
 ## Visualize the Networks
@@ -179,6 +177,86 @@ plot(g_work_with, edge.arrow.size = 0.2,
 
 Who in the class has the highest degree centrality for each measure?
 ```{r}
+
+# out degree centrality for student networks
+
+out_degree <- function(x) { 
+  
+  
+calculation <- degree(x, mode = c("out")) 
+paste("student", which.max(calculation), "has the greatest out degree centrality", sep = " ") 
+  
+  }
+
+View(degree(g_best)) 
+
+
+out_degree(g_friendly) 
+out_degree(g_best) 
+out_degree(g_work_with) 
+
+
+
+# in-degree centrality for the student networks 
+
+
+in_degree <- function(x) { 
+  
+  
+calculation <- degree(x, mode = c("in")) 
+paste("student", which.max(calculation), "has the greatest in-degree centrality", sep = " ") 
+  
+  }
+
+
+in_degree(g_friendly) 
+in_degree(g_best) 
+in_degree(g_work_with) 
+
+
+# calculate greatest total degree centrality for the student networks 
+
+
+
+total_centrality <- function(x) { 
+  
+  
+calculation <- degree(x, mode = c("all")) 
+paste("student", which.max(calculation), "has the greatest total centrality", sep = " ") 
+  
+  }
+
+
+total_centrality(g_friendly) 
+total_centrality(g_best) 
+total_centrality(g_work_with) 
+
+
+
+# IQR for total degree centrality in student networks 
+
+summary(degree(g_friendly, mode = c("all")))
+
+summary(degree(g_best, mode = c("all")))
+
+summary(degree(g_work_with, mode = c("all")))
+
+
+# distribution of total centrality in
+
+friendly_centrality <- degree(g_friendly, mode = c("all")) 
+hist(friendly_centrality, main = "Friendship Network Centrality Distribution",
+     breaks = 15) 
+
+best_friend_centrality <- degree(g_best, mode = c("all")) 
+hist(best_friend_centrality, main = "Best Friend Network Centrality Distribution",
+     breaks = 15) 
+
+work_with_centrality <- degree(g_work_with, mode = c("all")) 
+hist(work_with_centrality, main = "Work Preferences Centrality Distribution",
+     breaks = 15) 
+
+
 
 ```
 
