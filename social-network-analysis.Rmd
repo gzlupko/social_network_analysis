@@ -64,6 +64,27 @@ g_friendly <- graph_from_data_frame(d = friendly_edge,
 
 # best friends data set 
 
+best_friends <- read_csv("best.friends.csv") 
+
+
+best_edge <- best_friends %>%
+  select(from, to) 
+
+
+# load best.friends again for gender attribute 
+
+best_vertices <- read_csv("best.friends.csv") 
+
+best_vertices <- best_vertices %>%
+  select(from, gender.from) %>%
+  rename(gender = gender.from) %>%
+  rename(student = from) %>%
+  distinct() 
+
+
+g_best <- graph_from_data_frame(d = best_edge, 
+                                    vertices = best_vertices, 
+                                    directed = TRUE) 
 
 
 
@@ -86,13 +107,30 @@ V(g_friendly)$color <- ifelse(
 
 
 plot(g_friendly, edge.arrow.size = 0.2, 
-     vertext.label.color = "black")
+     vertext.label.color = "black", main = "Friendship Network")
 
 
 library(threejs) 
 
-graphjs(g_friendly, main  = "Student Friendships", 
+graphjs(g_friendly, main  = "Friendship Network", 
         showLabels = TRUE) 
+
+
+
+
+
+# visualize the best friends network using igraph 
+
+
+V(g_best)$color <- ifelse(
+  V(g_best)$gender == "male", "red", "blue"
+)
+
+
+plot(g_best, edge.arrow.size = 0.2, 
+     vertext.label.color = "black", main = "Best Friends Network")
+
+
 
 
 
