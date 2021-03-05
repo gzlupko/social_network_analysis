@@ -90,6 +90,34 @@ g_best <- graph_from_data_frame(d = best_edge,
 
 
 
+# work with data set 
+
+work_with <- read_csv("work.with.csv") 
+
+
+
+work_with_edge <- work_with %>%
+  select(from, to) 
+
+
+# load work with again for gender attribute 
+
+work_with_vertices<- read_csv("work.with.csv") 
+
+work_with_vertices <- work_with_vertices %>%
+  select(from, gender.from) %>%
+  rename(gender = gender.from) %>%
+  rename(student = from) %>%
+  distinct() 
+
+
+g_work_with <- graph_from_data_frame(d = work_with_edge, 
+                                    vertices = work_with_vertices, 
+                                    directed = TRUE) 
+
+
+
+
 ```
 
 ## Visualize the Networks
@@ -131,6 +159,17 @@ plot(g_best, edge.arrow.size = 0.2,
      vertext.label.color = "black", main = "Best Friends Network")
 
 
+
+# visualize the work preference network 
+
+
+V(g_work_with)$color <- ifelse(
+  V(g_work_with)$gender == "male", "red", "blue"
+)
+
+
+plot(g_work_with, edge.arrow.size = 0.2, 
+     vertext.label.color = "black", main = "Work Preference Network")
 
 
 
