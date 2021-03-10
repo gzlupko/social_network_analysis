@@ -421,6 +421,28 @@ How many **maximal cliques** are there in each of the networks?
 
 ```{r}
 
+# 64 maximal cliques in frienship network 
+
+friendly_max_cliques <-max_cliques(g_friendly)
+length(friendly_max_cliques)
+
+
+# 35 maximal cliques in frienship network 
+
+
+g_best_max_cliques <-max_cliques(g_best)
+length(g_best_max_cliques)
+
+
+
+# 36 maximal cliques in frienship network 
+
+work_with_max_cliques <-max_cliques(g_work_with)
+length(work_with_max_cliques)
+
+
+
+
 ```
 
 ## Components & Cutpoints
