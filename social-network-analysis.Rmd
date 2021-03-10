@@ -269,7 +269,10 @@ hist(work_with_centrality, main = "Work Preferences Centrality Distribution",
 
 Does **degree centrality** mean the same thing for each of your networks? Does it make sense for each of your networks?
 
-Degree centrality means different things for the different networks. 
+Degree centrality measures the same phenomenon (number of network ties) between each network but it has a different significance/interpretation for each network. For example, in the acquaintanceship and best friend networks, degree centrality indicates the number of ties that individuals have to other actors in the network. However, an individual who has high degree centrality in the best friend network indicates that the individual is. . .. 
+
+
+
 
 
 The centrality distribution plots indicate that the distribution of friendship centrality is more normal than work preferences. The distribution of best friend total centrality is left skewed, indicating that the majority of students in the best friend network are less central (less incoming and outcoming ties). This makes sense as we would expect best friend ties to be more exclusive. 
@@ -280,24 +283,88 @@ Who in the class has the highest closeness centrality?
 
 ```{r}
 
+
+# calculate greatest closeness centrality for the student networks 
+
+
+closeness_centrality <- function(x) { 
+  
+  
+calculation <- closeness(x, mode = c("all")) 
+paste("student", which.max(calculation), "has the greatest closeness centrality", sep = " ") 
+  
+  }
+
+closeness_centrality(g_friendly) 
+closeness_centrality(g_best) 
+closeness_centrality(g_work_with) 
+
+
+# betweenness centrality 
+
+
+
+betweennes_centrality <- function(x) { 
+  
+  
+calculation <- betweenness(x, directed = TRUE, weights = NULL) 
+paste("student", which.max(calculation), "has the greatest betweenness centrality", sep = " ") 
+  
+  }
+
+betweennes_centrality(g_friendly) 
+betweennes_centrality(g_best) 
+betweennes_centrality(g_work_with) 
+
+
+
+
 ```
 
 How does **betweeness centrality** differ from degree centrality? Is one more useful than the other? Does their utility differ between your three networks?
+
+
+Degree centrality is a measure of how many ties an individual has in a network. It is therefore measures an individual's centrality in a network as their connectedness to others. Individuals with high centrality are highly connected. This is contrasted with betweenness centrality, which is a separate operationalization of an individual's centarlity in a network. Betweenness centrality measures the extent to which an individual brokers a tie, or falls along a path, between other individuals in a network. This type of tie is relevant to notions of informational or resource brokerage in which an individual mediates the connection between two other individuals. Individuals with high betweenness centrality are intermediaries between many others in the network and as such, are in priviledged positions of facilitating information, resources, and processes throughout the network. 
+
+
 
 ## Simple structures
 
 Count the number of dyads and the number and type of triads using the following commands.
 ```{r}
-dyad_census()
+
+
+dyad_census(g_friendly) 
+dyad_census(g_best) 
+dyad_census(g_work_with) 
+
 ```
 [Documentation](http://igraph.org/r/doc/dyad_census.html)
 
 ```{r}
-triad_census()
+
+triad.census(g_friendly) 
+triad.census(g_best) 
+triad.census(g_work_with) 
+
+
+
+# Burt's constraint 
+
+which.max(constraint(g_friendly, nodes = V(g_friendly), weights = NULL)) 
+which.min(constraint(g_friendly, nodes = V(g_friendly), weights = NULL)) 
+
+
+
 ```
 [Documentation](http://igraph.org/r/doc/triad_census.html)
 
 Do these metrics tell you anything about the networks? If so what?
+
+Dyads and triads are important indicators for how information flows through networks. Dyads and triads represent instances of solidified relationships between actors, which are the bases of cliques and network subgroups. Information is likely to flow within the dyadic and triadic subgroups as a function of their recipricol connectedness. The number of dyadic and triadic relationships in a network could have implications for how information flows through networks. For example, it's possible that in subgroup formations, some individuals are only connected to inividuals in that subgroup and not with other individuals in the network. This may constrain the exchange of new information throughout the network (Burt, 1992). 
+
+
+
 
 ## Cliques
 
@@ -307,11 +374,46 @@ What is the size of the largest clique(s) in each of the three networks?
 
 ```{r}
 
+# friendship network 
+clique_num(g_friendly)
+
+
+# best friend network 
+clique_num(g_best)
+
+
+# work preferences network 
+clique_num(g_work_with)
+
+
 ```
 
 Which nodes/vertices are in the largest cliques for the three networks? Is there much overlap?
 
 ```{r}
+
+# friendship network 
+largest_cliques(g_friendly) 
+friendship_clique <- largest_cliques(g_friendly) 
+friendship_clique <- data.frame(unlist(friendship_clique))
+# show how many times the same individuals occur in the largest cliques;
+sort(table(friendship_clique$unlist.friendship_clique.))
+# many individuals appeared in four cliques
+
+
+mode
+# best friend network 
+best_friend_clique <- largest_cliques(g_best) 
+best_friend_clique <- data.frame(unlist(best_friend_clique))
+sort(table(best_friend_clique$unlist.best_friend_clique.))
+
+
+
+
+# work preferences network 
+work_with_clique <- largest_cliques(g_work_with) 
+work_with_clique <- data.frame(unlist(work_with_clique))
+sort(table(work_with_clique$unlist.work_with_clique.))
 
 ```
 
