@@ -88,8 +88,6 @@ g_best <- graph_from_data_frame(d = best_edge,
 
 
 
-
-
 # work with data set 
 
 work_with <- read_csv("work.with.csv") 
@@ -187,8 +185,6 @@ paste("student", which.max(calculation), "has the greatest out degree centrality
   
   }
 
-View(degree(g_best)) 
-
 
 out_degree(g_friendly) 
 out_degree(g_best) 
@@ -269,13 +265,9 @@ hist(work_with_centrality, main = "Work Preferences Centrality Distribution",
 
 Does **degree centrality** mean the same thing for each of your networks? Does it make sense for each of your networks?
 
-Degree centrality measures the same phenomenon (number of network ties) between each network but it has a different significance/interpretation for each network. For example, in the acquaintanceship and best friend networks, degree centrality indicates the number of ties that individuals have to other actors in the network. However, an individual who has high degree centrality in the best friend network indicates that the individual is. . .. 
+Degree centrality measures the same phenomenon (number of network ties) between each network but it takes on a different significance/interpretation for each network. For example, in the friendship network, a high degree centrality indicates that a student has a lot of friends. In the best friend network, degree centrality also indicates that the student has many best friends, but because this is a best friend network, we get a sense that the student has a high volume of strong friendships. Analyzing degree centrality between the two networks can thus give us a sense for the number of strong and weak ties that an individual maintains in class (here, 'weak' being relative to best friend ties). 
 
-
-
-
-
-The centrality distribution plots indicate that the distribution of friendship centrality is more normal than work preferences. The distribution of best friend total centrality is left skewed, indicating that the majority of students in the best friend network are less central (less incoming and outcoming ties). This makes sense as we would expect best friend ties to be more exclusive. 
+Additionally, another interesting analysis of degree centrality is to compare the distribution of centrality between the networkks. The centrality distribution plots indicate that the distribution of friendship centrality is more normal than work preferences. In contrast, the distribution total centrality in the best friend network total centrality is left skewed, indicating that the majority of students in the best friend network are less central (less incoming and outcoming ties) but that some individuals are best friends for many students. The left skewed nature of the best friend centrality distribution makes sense as we would expect best friend ties to be more exclusive, and thus students would be expected to maitain only a few ties.
 
 
 
