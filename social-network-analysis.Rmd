@@ -498,6 +498,8 @@ Community Detection
 
 ```{r}
 
+
+# friendly network 
 undirected_g_friendly <- as.undirected(g_friendly, mode = c("collapse")) 
 
 
@@ -526,6 +528,7 @@ community_best <- fastgreedy.community(undirected_g_best)
 plot(community_best, undirected_g_best) 
 
 
+
 ```
 
 
@@ -537,7 +540,7 @@ plot(community_best, undirected_g_best)
 Write a narrative description of the social ties among members of this 7th grade class using the network, centrality and structural metrics you have developed. Can you provide any recommendations to the teacher of this class based on your analysis? What other information would you want to know? Can you remeber being in seventh grade, does this refelct your experience?
 
 
-
+A few features of this 7th grade network stand out from SNA. First, visualization and community detection methods identified that there are strong, homophilic relationships within gender in the friendship network. This indicates that students primarily maintain friends with the same gender. Another finding that stands out from SNA methods was the identification of Student 13 as an articulation point in multiple networks. This signifies that Student 13 is a necessary intermediary between students 18 and 25 with the rest of the class. If the teacher wants to ensure that students 18 and 25 feel included in class activites, and avoid a scenario in which student 13's absence disconnects 18 and 25, the teacher should consider ways in which 18 and 25 can form new relationships with other students. 
 
 
 
@@ -565,7 +568,7 @@ head(law_nodes)
 
 
 
-# generate network object 
+# generate network object - general network (will break multiplex network into component layer networks below)
 
 g_law <- graph_from_data_frame(d = law_edges, 
                                     vertices = law_nodes, 
@@ -583,12 +586,10 @@ vertex_attr(g_law, index = V(g_law))
 # centrality metrics 
 
 
-
 law_centrality <- law_nodes %>%
   mutate(degree_in = degree(g_law, mode = c("in")), degree_out = degree(g_law, mode = c("out")), degree_total = degree(g_law, mode = c("all")), strength = strength(g_law))  %>% 
   arrange(desc(strength)) 
 
-head(law_centrality) 
 
 # View individuals in law network with greatest centrality measures 
 law_centrality %>%
@@ -604,9 +605,47 @@ law_cor <- cor(law_centrality)
 corrplot(law_cor, method = "number", 
          type = "lower") 
 
-# regression tests 
+
+```
 
 
+
+Bootstrapped T-Tests for Comparison of Degree Centrality
+
+```{r}
+
+library(MKinfer) 
+
+head(law_centrality) 
+
+litigation_strength <- law_centrality %>%
+  filter(nodePractice == 2) %>%
+  select(strength) 
+
+corporate_strength <- law_centrality %>%
+  filter(nodePractice == 1) %>%
+  select(strength) 
+head(corporate_strength) 
+
+
+
+# compare means to test if strength is signifincantly different in one practice area
+
+boot.t.test(litigation_strength, corporate_strength) 
+
+
+female_degree_total <- law_centrality %>%
+  filter(nodeGender == 2) %>%
+  select(degree_total) 
+
+male_degree_total <- law_centrality %>%
+  filter(nodeGender == 1) %>%
+  select(degree_total) 
+head(male_degree_total) 
+
+
+# total degree for males across network is statistically  larger than females. However, are there strong effect sizes for gender-based differences in the work-related ties in the network? 
+boot.t.test(female_degree_total, male_degree_total, alternative = "less")
 
 
 
@@ -614,19 +653,123 @@ corrplot(law_cor, method = "number",
 
 
 
-Regression Analyses 
-
-Likely can't use linear regression bc network data violates assumptions of independence of observations. But here goes. 
+Multiple Regression Quadratic Assignment Procedure (MR-QAP)
 
 
 ```{r}
 
-summary(lm(degree_out ~ nodeAge, data = law_centrality)) 
-summary(lm(degree_out ~ nodeAge, data = law_centrality)) 
-summary(lm(strength ~ nodeGender, data = law_centrality)) 
+library(ergm) 
+
+
+# generate layer network: advice, friendship, and co-working networks 
+# law_edges (1 = advice, 2 = friendship, 3 = co-work)
+
+View(law_edges) 
+
+View(law_nodes) 
+class(law_nodes)
+
+head(law_edges)
+
+colnames(law_edges) <- c("layerID", "nodeIn", "nodeOut", "weight")
+
+
+# advice network 
+advice_edges <- law_edges %>%
+  filter(layerID == 1) 
+ 
+
+g_advice <- graph_from_data_frame(d = advice_edges, 
+                                    vertices = law_nodes, 
+                                    directed = TRUE) 
+
+
+# friendship network 
+
+friendship_edges <- law_edges %>%
+  filter(layerID == 2) 
+ 
+
+
+
+g_friendship <- graph_from_data_frame(d = friendship_edges, 
+                                    vertices = law_nodes, 
+                                    directed = TRUE) 
+
+# co-working network 
+
+
+advice_edges <- law_edges %>%
+  filter(layerID == 1) %>%
+  select(nodeIn, nodeOut) 
+ 
+
+
+friendship_edges <- law_edges %>%
+  filter(layerID == 2) %>% 
+  select(nodeIn, nodeOut) 
+
+
+coworking_edges <- law_edges %>%
+  filter(layerID == 3) %>%
+  select(nodeIn, nodeOut) 
+
+# adjacency matrices: advice, friendship and coworking 
+
+
+advice_adjacency <- get.adjacency(graph.edgelist(as.matrix(advice_edges), directed = TRUE)) 
+
+friendship_adjacency <- get.adjacency(graph.edgelist(as.matrix(friendship_edges), directed = TRUE))
+
+coworking_adjacency <- get.adjacency(graph.edgelist(as.matrix(coworking_edges), directed=TRUE))
+
+
+advice_matrix <- as.matrix(advice_adjacency)
+friendship_matrix <- as.matrix(friendship_adjacency)
+coworking_matrix <- as.matrix(coworking_adjacency)
+
+
+
+
+# calculate the correlations between the multiple networks in the law firm:
+
+
+library(sna) 
+library(network)
+
+gcor(advice_matrix, friendship_matrix, coworking_matrix)
+
+gcor(advice_matrix,friendship_matrix)
+gcor(friendship_matrix, coworking_matrix)
+gcor(advice_matrix, coworking_matrix)
+
+
+# test QAP
+
+
+qap_test <- qaptest(list(advice_matrix, friendship_matrix, coworking_matrix), gcor, g1 = 1, g2 = 2, reps = 100)
+
+qap_test
+plot(qap_test)
+
+
+advice_and_friendship_model <- netlm(advice_matrix, friendship_matrix, reps = 100)
+advice_and_coworking_model <- netlm(advice_matrix, coworking_matrix, reps = 100)
+
+# model summaries - are advice networks and co-working networks more related?
+summary(advice_and_friendship_model)
+summary(advice_and_coworking_model)
+
 
 
 ```
+
+
+The QAP finds that advice and coworking networks share more variance than advice and friendship networks (r^2 = 0.23 and r^2 = 0.17, respectively). The differences among the shared variance is not large. An explanation for this could be that individuals at the law firm seek multiple types of advice; advice related to work and advice related to life outside of work. In general, an analysis of the correlation of each networks' adjancecy matrices showed that the advice, friendship, and coworking networks were substantially related (r = 0.4). Again, the largest correlation was found between advice and coworking (r = 0.48). One possible explanation for this is that individuals in this network often seek advice from those that they work with. The lowest correlation was between friendship and co-working (r = 0.26). One possible explanation for this is that, in general throughout the network, individuals maintain some friendships with those that they work with but they prefer to list those that they do not necessarily work with as friends. 
+
+
+
+
 
 
 
