@@ -17,9 +17,14 @@ In this project, I build several social network diagrams (graphs/sociograms) of 
 
 
 
+<img src= "https://github.com/gzlupko/social_network_analysis/blob/master/Network_Visualizations/best_friend_centrality_dist.png" width = 750 > 
 
-![alt text](https://github.com/gzlupko/social_network_analysis/blob/master/Network_Visualizations/best_friend_centrality_dist.png)
 
+
+
+
+
+<img src= "https://github.com/gzlupko/social_network_analysis/blob/master/Network_Visualizations/friendship_network.png" width = 850 > 
 
 
 
@@ -31,6 +36,7 @@ In this project, I build several social network diagrams (graphs/sociograms) of 
 
 
 
+<img src= "https://github.com/gzlupko/social_network_analysis/blob/master/Network_Visualizations/subgroup_cluster_friendship.png" width = 850 > 
 
 
 
@@ -38,8 +44,7 @@ In this project, I build several social network diagrams (graphs/sociograms) of 
 
 
 
-
-References
+## References
 
 Lazega, E. (2001). The Collegial Phenomenon: The Social Mechanisms of Cooperation Among Peers in a Corporate Law Partnership. Oxford University Press. 
 
