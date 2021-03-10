@@ -13,6 +13,27 @@ Social network anlaysis has found utility is institutional, classroom and analys
 In this project, I build several social network diagrams (graphs/sociograms) of a school classroom and then analyze centrality measures and clusters within the network. In addition, I also analyze multiplex organizational network data from a law firm collected from Lazega (2001) and publically accessed through The Colorado Index of Complex Networks (ICON). In the law firm network, I compare differences in network types, including advice, co-working, and friendship networks. I also examine how network structure is moderated by demographic variables (e.g. age and gender) and functional practice areas (e.g. litigation, corporate). 
 
 
+## Example Network Structure Measures and Visualizations 
+
+
+
+
+![alt text](https://github.com/gzlupko/social_network_analysis/blob/master/Network_Visualizations/best_friend_centrality_dist.png)
+
+
+
+
+
+## Example Clustering Approaches 
+
+
+
+
+
+
+
+
+
 
 
 
