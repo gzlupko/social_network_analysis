@@ -504,7 +504,6 @@ undirected_g_friendly <- as.undirected(g_friendly, mode = c("collapse"))
 V(undirected_g_friendly)$color <- ifelse(V(undirected_g_friendly)$gender == "male", "red", "blue")
 
 
-
 community_friendly <- fastgreedy.community(undirected_g_friendly) 
 
 # number of communities identified
@@ -516,11 +515,18 @@ length(community_friendly)
 plot(community_friendly, undirected_g_friendly) 
 
 plot(community_friendly, undirected_g_friendly, edge.arrow.size = 0.2, 
-     vertext.label.color = "black") 
+     vertext.label.color = "black", main = "Subgroup Clusters \n Friendship Network") 
+
+
+
+undirected_g_best <- as.undirected(g_best, mode = c("collapse")) 
+
+V(undirected_g_best)$color <- ifelse(V(undirected_g_best)$gender == "male", "red", "blue")
+community_best <- fastgreedy.community(undirected_g_best) 
+plot(community_best, undirected_g_best) 
 
 
 ```
-
 
 
 
@@ -532,8 +538,98 @@ Write a narrative description of the social ties among members of this 7th grade
 
 
 
+
+
+
+
 ## Test out your skills
 
 Find another data set that interests you on the ([ICON](https://icon.colorado.edu/#!/)) website. Load the data into igraph, visualize the graph and use one of the metrics you have learned to characterize structures within the graph.
 
+
 ```{r}
+
+
+
+# import edge list and rename columns 
+
+law_edges <- read.table("law_edges.txt", header = F)
+colnames(law_edges) <- c("layerID", "nodeID", "nodeID", "weight") 
+
+# import nodes 
+
+law_nodes <- read.table("law_nodes.txt", header = T) 
+head(law_nodes)
+
+# node variables: status (1 = partner, 2 = associate), gender (1 = man, 2 = woman), office (1 = Boston, 2 = Hartford, 3 = Providence), nodeSeniority = years with the firm, nodeAge, practice (1 = litigation, 2 = corporate), law school (1 = harvard, 2 = yale, 3 = uconn, 4 = other) 
+
+
+
+# generate network object 
+
+g_law <- graph_from_data_frame(d = law_edges, 
+                                    vertices = law_nodes, 
+                                    directed = TRUE) 
+
+
+# basic plot of network 
+plot(g_law) 
+
+
+
+vertex_attr(g_law, index = V(g_law))
+
+
+# centrality metrics 
+
+
+
+law_centrality <- law_nodes %>%
+  mutate(degree_in = degree(g_law, mode = c("in")), degree_out = degree(g_law, mode = c("out")), degree_total = degree(g_law, mode = c("all")), strength = strength(g_law))  %>% 
+  arrange(desc(strength)) 
+
+head(law_centrality) 
+
+# View individuals in law network with greatest centrality measures 
+law_centrality %>%
+  select(nodeID, degree_in, degree_out, degree_total, 
+         strength) 
+
+
+# correlation matrix between node attributes (e.g. gender, office, seniority, etc) and centrality scores . . . significant relationships?
+
+library(corrplot) 
+
+law_cor <- cor(law_centrality) 
+corrplot(law_cor, method = "number", 
+         type = "lower") 
+
+# regression tests 
+
+
+
+
+
+```
+
+
+
+Regression Analyses 
+
+Likely can't use linear regression bc network data violates assumptions of independence of observations. But here goes. 
+
+
+```{r}
+
+summary(lm(degree_out ~ nodeAge, data = law_centrality)) 
+summary(lm(degree_out ~ nodeAge, data = law_centrality)) 
+summary(lm(strength ~ nodeGender, data = law_centrality)) 
+
+
+```
+
+
+
+
+
+
