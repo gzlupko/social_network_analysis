@@ -449,9 +449,88 @@ length(work_with_max_cliques)
 
 Find the cutpoints (articulation points) for each of the three networks you generated. What does this tell you about the graphs? Does what you find match a visual exploration of the networks?
 
+Student 13 is an articulation point in the best friend and work preferences networks. This means that removing student 13 would disconnect the graph into two or more parts. This means that student 13 is forming an important connection with two portions of the network that otherwise would not be connected. In Burt's terminology, we can think of student 13 as bridging a structural hole that exists in the networks - a boundary in which student 13 connects two otherwise disparate network subgroups. Interestingly, a visualization of the networks shows that student 13 is forming this essential, boundary-spanning connection for students 18 and 25 in the best friend and work with networks. 
+
+```{r}
+
+# friendship network 
+articulation_points(g_friendly) 
+plot(g_friendly) 
+
+articulation_points(g_best) 
+plot(g_best)
+
+articulation_points(g_work_with) 
+plot(g_work_with)
+
+```
+
+
+
+```{r}
+
+
+values <- as.numeric(factor(V(g_friendly)$gender))
+assortativity(g_friendly, values) 
+
+
+
+# Calculate the observed assortativity
+observed.assortativity <- assortativity(g_friendly, values)
+
+# Calculate the assortativity of the network randomizing the gender attribute 1000 times
+# tell for loop, for every i in ‘results’ calculate assortativity while randomly permuting the object values each time with sample( )
+
+results <- vector('list', 1000)
+for(i in 1:1000){
+  results[[i]] <- assortativity(g_friendly, sample(values))
+}
+
+# Plot the distribution of assortativity values and add a red vertical line at the original observed value
+hist(unlist(results), main = "Normal Distribution of Assortativity")  
+abline(v = observed.assortativity, col = "red", lty = 3, lwd=2)
+
+
+```
+
+
+Community Detection 
+
+```{r}
+
+undirected_g_friendly <- as.undirected(g_friendly, mode = c("collapse")) 
+
+
+V(undirected_g_friendly)$color <- ifelse(V(undirected_g_friendly)$gender == "male", "red", "blue")
+
+
+
+community_friendly <- fastgreedy.community(undirected_g_friendly) 
+
+# number of communities identified
+
+length(community_friendly) 
+
+# 2 communities were identified by the Fast Greedy Algorithm - plot to see if those were boys and girls
+
+plot(community_friendly, undirected_g_friendly) 
+
+plot(community_friendly, undirected_g_friendly, edge.arrow.size = 0.2, 
+     vertext.label.color = "black") 
+
+
+```
+
+
+
+
+
+
 ## Putting it all together
 
 Write a narrative description of the social ties among members of this 7th grade class using the network, centrality and structural metrics you have developed. Can you provide any recommendations to the teacher of this class based on your analysis? What other information would you want to know? Can you remeber being in seventh grade, does this refelct your experience?
+
+
 
 ## Test out your skills
 
